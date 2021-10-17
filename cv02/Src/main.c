@@ -24,6 +24,7 @@ static volatile uint32_t Tick;
 
 #define LED_TIME_BLINK 300
 #define BUTTON_DEBOUNCE 40
+#define BUTTON_DEBOUNCE_SHORT 5
 #define LED_TIME_SHORT 100
 #define LED_TIME_LONG 1000
 
@@ -56,10 +57,11 @@ void blikac(void)
 
 void tlacitka(void)
 {
-	static uint32_t debounce;
+	static uint32_t debounce1;
+	static uint32_t debounce2;
 	static uint32_t off_time;
 
-	if (Tick > debounce + BUTTON_DEBOUNCE){
+	if (Tick > debounce1 + BUTTON_DEBOUNCE){
 		static uint32_t old_s1;
 		static uint32_t old_s2;
 		uint32_t new_s1 = GPIOC->IDR & (1<<1);
@@ -78,8 +80,19 @@ void tlacitka(void)
 		old_s2 = new_s2;
 	}
 
+	if (Tick > debounce2 + BUTTON_DEBOUNCE_SHORT){
+		static uint16_t debounce = 0xFFFF;
+
+		debounce <<=1;
+		if(GPIOC->IDR & (1<<1)) debounce |= 0x0001;
+		if(debounce == 0x8000){
+			off_time = Tick + LED_TIME_LONG; // Turning on the LED for the longer period
+			GPIOB->BSRR = (1<<0);
+		}
+	}
+
 	if (Tick > off_time) {
-		GPIOB->BRR = (1<<0);
+		GPIOB->BRR = (1<<0); // Turning off the LED
 	}
 }
 
