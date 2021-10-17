@@ -25,6 +25,7 @@ static volatile uint32_t Tick;
 #define LED_TIME_BLINK 300
 #define BUTTON_DEBOUNCE 40
 #define LED_TIME_SHORT 100
+#define LED_TIME_LONG 1000
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -65,7 +66,7 @@ void tlacitka(void)
 		uint32_t new_s2 = GPIOC->IDR & (1<<0);
 
 		if (old_s1 && !new_s1) { // falling edge
-			off_time = Tick + LED_TIME_SHORT;
+			off_time = Tick + LED_TIME_LONG;
 			GPIOB->BSRR = (1<<0);
 		}
 		old_s1 = new_s1;
