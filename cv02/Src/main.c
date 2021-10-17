@@ -43,15 +43,11 @@ void SysTick_Handler(void)
 
 void blikac(void)
 {
-	static enum { LED_OFF, LED_ON } stav;
 	static uint32_t DelayCnt = 0;
 
-	if (stav==LED_ON){
-		if (Tick > (DelayCnt + LED_TIME_BLINK)){
-			GPIOA->BRR = (1<<4);
-			DelayCnt = Tick;
-			stav = LED_OFF;
-		}
+	if (Tick > (DelayCnt + LED_TIME_BLINK)){
+		GPIOA->BRR = (1<<4);
+		DelayCnt = Tick;
 	}
 }
 
