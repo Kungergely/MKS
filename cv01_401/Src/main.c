@@ -26,14 +26,14 @@
 
 int main(void)
 {
-	static const uint8_t morzeovka[32] = { 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
+	static const uint32_t morzeovka = 0b10101001110111011100101010000000;
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 	GPIOA->MODER |= GPIO_MODER_MODER5_0;
     /* Loop forever */
 	for(;;){
 
-		for (uint8_t i = 0; i < sizeof(morzeovka); i++){
-			if(morzeovka[i]==1) GPIOA->BSRRL = (1<<5);
+		for (uint8_t i = 0; i < 32; i++){
+			if(morzeovka & (1 << (31-i))) GPIOA->BSRRL = (1<<5);
 			else GPIOA->BSRRH = (1<<5);
 			for (volatile uint32_t i = 0; i < 300000; i++) {}
 		}
